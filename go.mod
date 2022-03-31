@@ -1,4 +1,4 @@
-module abslog
+module github.com/rendis/abslog
 
 go 1.18
 
