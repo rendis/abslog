@@ -1,2 +1,2 @@
 # abslog
-Library that abstracts you from which log library you use behind
+Library that abstracts it from the log library used behind
