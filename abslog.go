@@ -1,5 +1,6 @@
 package abslog
 
+// Logger generic interface for logging
 type Logger interface {
 	Debug(args ...interface{})
 	Debugf(format string, args ...interface{})
@@ -13,6 +14,7 @@ type Logger interface {
 	Fatalf(format string, args ...interface{})
 }
 
+// AbsLog logger abstraction
 type AbsLog struct {
 	logger Logger
 }

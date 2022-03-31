@@ -17,6 +17,7 @@ const (
 	FatalLevel
 )
 
+// AbsLogBuilder is a builder for creating a new AbsLogger.
 type AbsLogBuilder struct {
 	logLevel Level
 }
@@ -46,19 +47,23 @@ var logGen = func(logLevel Level) Logger {
 	return logger.Sugar()
 }
 
+// SetLoggerGenerator sets custom logger generator.
 func SetLoggerGenerator(generator func(Level) Logger) {
 	logGen = generator
 }
 
+// GetAbsLogBuilder returns a new AbsLogBuilder.
 func GetAbsLogBuilder() *AbsLogBuilder {
 	return &AbsLogBuilder{InfoLevel}
 }
 
+// LogLevel sets the log level for the AbsLogger.
 func (builder *AbsLogBuilder) LogLevel(logLevel Level) *AbsLogBuilder {
 	builder.logLevel = logLevel
 	return builder
 }
 
+// Build builds a new AbsLogger.
 func (builder *AbsLogBuilder) Build() *AbsLog {
 	return &AbsLog{
 		logger: logGen(builder.logLevel),
