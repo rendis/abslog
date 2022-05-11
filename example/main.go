@@ -4,7 +4,11 @@ import (
 	"github.com/rendis/abslog"
 )
 
-var log = abslog.GetAbsLogBuilder().LogLevel(abslog.InfoLevel).Build()
+var log = GetLogger()
+
+func GetLogger() *abslog.AbsLog {
+	return abslog.GetAbsLogBuilder().LogLevel(abslog.InfoLevel).Build()
+}
 
 func main() {
 	log.Debug("Debug not logged")

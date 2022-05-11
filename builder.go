@@ -9,7 +9,7 @@ import (
 
 type LogLevel int8
 
-type LoggerGen func(logLevel LogLevel) AbsLog
+type LoggerGen func(logLevel LogLevel) *AbsLog
 
 const (
 	DebugLevel LogLevel = iota + 1
@@ -46,7 +46,7 @@ func (builder *AbsLogBuilder) LoggerGen(generator LoggerGen) *AbsLogBuilder {
 }
 
 // Build builds a new AbsLogger.
-func (builder *AbsLogBuilder) Build() AbsLog {
+func (builder *AbsLogBuilder) Build() *AbsLog {
 	if builder.loggerGen == nil {
 		log.Fatalf("loggerGen is not set in AbsLogBuilder")
 	}
@@ -56,7 +56,7 @@ func (builder *AbsLogBuilder) Build() AbsLog {
 	return builder.loggerGen(builder.logLevel)
 }
 
-func defaultLoggerGen(logLevel LogLevel) AbsLog {
+func defaultLoggerGen(logLevel LogLevel) *AbsLog {
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
@@ -95,7 +95,7 @@ func defaultLoggerGen(logLevel LogLevel) AbsLog {
 
 	// Create logger
 	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(zap.ErrorLevel))
-	return logger.Sugar()
+	return &AbsLog{logger: logger.Sugar()}
 }
 
 func getZapLevel(logLevel LogLevel) zapcore.Level {
