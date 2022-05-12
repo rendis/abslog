@@ -72,7 +72,7 @@ func defaultLoggerGen(logLevel LogLevel) *AbsLog {
 
 	// Stderr level enabler
 	stderrLevels := zap.LevelEnablerFunc(func(level zapcore.Level) bool {
-		return level >= zapLevel
+		return level >= zap.ErrorLevel && level >= zapLevel
 	})
 
 	// Write syncers
