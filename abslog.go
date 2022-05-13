@@ -1,73 +1,21 @@
 package abslog
 
-type Logger interface {
-	Debug(args ...interface{})
-	Debugf(format string, args ...interface{})
-
-	Info(args ...interface{})
-	Infof(format string, args ...interface{})
-
-	Warn(args ...interface{})
-	Warnf(format string, args ...interface{})
-
-	Error(args ...interface{})
-	Errorf(format string, args ...interface{})
-
-	Panic(args ...interface{})
-	Panicf(format string, args ...interface{})
-
-	Fatal(args ...interface{})
-	Fatalf(format string, args ...interface{})
-}
-
 type AbsLog struct {
-	logger Logger
-}
+	Debug  func(args ...interface{})
+	Debugf func(format string, args ...interface{})
 
-func (l *AbsLog) Debug(args ...interface{}) {
-	l.logger.Debug(args...)
-}
+	Info  func(args ...interface{})
+	Infof func(format string, args ...interface{})
 
-func (l *AbsLog) Debugf(format string, args ...interface{}) {
-	l.logger.Debugf(format, args...)
-}
+	Warn  func(args ...interface{})
+	Warnf func(format string, args ...interface{})
 
-func (l *AbsLog) Info(args ...interface{}) {
-	l.logger.Info(args...)
-}
+	Error  func(args ...interface{})
+	Errorf func(format string, args ...interface{})
 
-func (l *AbsLog) Infof(format string, args ...interface{}) {
-	l.logger.Infof(format, args...)
-}
+	Panic  func(args ...interface{})
+	Panicf func(format string, args ...interface{})
 
-func (l *AbsLog) Warn(args ...interface{}) {
-	l.logger.Warn(args...)
-}
-
-func (l *AbsLog) Warnf(format string, args ...interface{}) {
-	l.logger.Warnf(format, args...)
-}
-
-func (l *AbsLog) Error(args ...interface{}) {
-	l.logger.Error(args...)
-}
-
-func (l *AbsLog) Errorf(format string, args ...interface{}) {
-	l.logger.Errorf(format, args...)
-}
-
-func (l *AbsLog) Panic(args ...interface{}) {
-	l.logger.Panic(args...)
-}
-
-func (l *AbsLog) Panicf(format string, args ...interface{}) {
-	l.logger.Panicf(format, args...)
-}
-
-func (l *AbsLog) Fatal(args ...interface{}) {
-	l.logger.Fatal(args...)
-}
-
-func (l *AbsLog) Fatalf(format string, args ...interface{}) {
-	l.logger.Fatalf(format, args...)
+	Fatal  func(args ...interface{})
+	Fatalf func(format string, args ...interface{})
 }
