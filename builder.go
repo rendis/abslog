@@ -21,50 +21,69 @@ const (
 )
 const defaultLoggerType = ZapLogger
 
-type LoggerGen func(logLevel LogLevel) *AbsLog
+type LoggerGen func(logLevel LogLevel) AbsLog
 
-// AbsLogBuilder is a builder for creating a new AbsLogger.
-type AbsLogBuilder struct {
+// absLogBuilder is a builder for creating a new AbsLogger.
+type absLogBuilder struct {
 	logLevel   LogLevel
 	loggerGen  LoggerGen
 	loggerType LoggerType
 }
 
-// GetAbsLogBuilder returns a new AbsLogBuilder.
-func GetAbsLogBuilder() *AbsLogBuilder {
-	return &AbsLogBuilder{
+// GetAbsLogBuilder returns a new AbsLog builder.
+func GetAbsLogBuilder() *absLogBuilder {
+	return &absLogBuilder{
 		logLevel:   InfoLevel,
 		loggerType: defaultLoggerType,
 	}
 }
 
-// LogLevel sets the log level for the AbsLogger.
-func (builder *AbsLogBuilder) LogLevel(level LogLevel) *AbsLogBuilder {
+// LogLevel sets the log level for the AbsLog.
+func (builder *absLogBuilder) LogLevel(level LogLevel) *absLogBuilder {
 	builder.logLevel = level
 	return builder
 }
 
-func (builder *AbsLogBuilder) LoggerGen(generator LoggerGen) *AbsLogBuilder {
+// LoggerGen sets the AbsLog generator function.
+func (builder *absLogBuilder) LoggerGen(generator LoggerGen) *absLogBuilder {
 	builder.loggerGen = generator
 	return builder
 }
 
-func (builder *AbsLogBuilder) LoggerType(loggerType LoggerType) *AbsLogBuilder {
+// LoggerType sets the logger type for the AbsLog.
+func (builder *absLogBuilder) LoggerType(loggerType LoggerType) *absLogBuilder {
 	builder.loggerType = loggerType
 	return builder
 }
 
-// Build builds a new AbsLogger.
-func (builder *AbsLogBuilder) Build() *AbsLog {
+// Build builds a new AbsLog.
+func (builder *absLogBuilder) Build() AbsLog {
 	if builder.loggerGen == nil {
 		switch builder.loggerType {
 		case ZapLogger:
-			builder.loggerGen = GetZapLogger
+			builder.loggerGen = getZapLogger
 		case LogrusLogger:
-			builder.loggerGen = GetLogrusLogger
+			builder.loggerGen = getLogrusLogger
 		default:
 			panic(fmt.Sprintf("AbsLog type '%s' is not supported", builder.loggerType))
 		}
 	}
 	return builder.loggerGen(builder.logLevel)
+}
+
+// BuildAndSetAsGlobal builds a new AbsLogger and sets it as the global AbsLog.
+func (builder *absLogBuilder) BuildAndSetAsGlobal() AbsLog {
+	if builder.loggerGen == nil {
+		switch builder.loggerType {
+		case ZapLogger:
+			builder.loggerGen = getZapLogger
+		case LogrusLogger:
+			builder.loggerGen = getLogrusLogger
+		default:
+			panic(fmt.Sprintf("AbsLog type '%s' is not supported", builder.loggerType))
+		}
+	}
+	l := builder.loggerGen(builder.logLevel)
+	SetGlobalLogger(l)
+	return l
 }

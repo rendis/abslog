@@ -6,25 +6,25 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func GetLogrusLogger(logLevel LogLevel) *AbsLog {
+func getLogrusLogger(logLevel LogLevel) AbsLog {
 	logrus.WithContext(context.Background())
 	logrus.SetFormatter(stackdriver.NewFormatter())
 	logrus.SetLevel(getLogrusLevel(logLevel))
 	logrus.SetReportCaller(true)
 
-	return &AbsLog{
-		Debug:  logrus.Debug,
-		Debugf: logrus.Debugf,
-		Info:   logrus.Info,
-		Infof:  logrus.Infof,
-		Warn:   logrus.Warn,
-		Warnf:  logrus.Warnf,
-		Error:  logrus.Error,
-		Errorf: logrus.Errorf,
-		Fatal:  logrus.Fatal,
-		Fatalf: logrus.Fatalf,
-		Panic:  logrus.Panic,
-		Panicf: logrus.Panicf,
+	return &absLog{
+		debug:  logrus.Debug,
+		debugf: logrus.Debugf,
+		info:   logrus.Info,
+		infof:  logrus.Infof,
+		warn:   logrus.Warn,
+		warnf:  logrus.Warnf,
+		error:  logrus.Error,
+		errorf: logrus.Errorf,
+		fatal:  logrus.Fatal,
+		fatalf: logrus.Fatalf,
+		panic:  logrus.Panic,
+		panicf: logrus.Panicf,
 	}
 }
 

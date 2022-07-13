@@ -5,14 +5,14 @@ import (
 	"github.com/rendis/abslog"
 )
 
-func GetZapLogger() *abslog.AbsLog {
+func GetZapLogger() abslog.AbsLog {
 	return abslog.GetAbsLogBuilder().
 		LoggerType(abslog.ZapLogger).
 		LogLevel(abslog.DebugLevel).
 		Build()
 }
 
-func GetLogrusLogger() *abslog.AbsLog {
+func GetLogrusLogger() abslog.AbsLog {
 	return abslog.GetAbsLogBuilder().
 		LoggerType(abslog.LogrusLogger).
 		LogLevel(abslog.InfoLevel).
@@ -20,6 +20,13 @@ func GetLogrusLogger() *abslog.AbsLog {
 }
 
 func main() {
+
+	abslog.Info("Info global")
+	abslog.Warn("Warn global")
+	abslog.Error("Error global")
+
+	fmt.Println()
+
 	var log = GetZapLogger()
 	useLog(log, "Zap logger")
 
@@ -29,7 +36,7 @@ func main() {
 	useLog(log, "Logrus logger")
 }
 
-func useLog(log *abslog.AbsLog, logType string) {
+func useLog(log abslog.AbsLog, logType string) {
 	log.Debug("Debug logged - ", logType)
 	log.Info("Info logged - ", logType)
 	log.Warn("Warn logged - ", logType)

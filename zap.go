@@ -9,7 +9,7 @@ import (
 
 const logTimeFormat = "2006-01-02T15:04:05Z"
 
-func GetZapLogger(logLevel LogLevel) *AbsLog {
+func getZapLogger(logLevel LogLevel) AbsLog {
 
 	// Encoder config
 	cfg := zapcore.EncoderConfig{
@@ -17,7 +17,7 @@ func GetZapLogger(logLevel LogLevel) *AbsLog {
 		LevelKey:      "severity",
 		EncodeLevel:   zapcore.CapitalLevelEncoder,
 		TimeKey:       "timestamp",
-		EncodeTime:    CustomTimeEncoder,
+		EncodeTime:    customTimeEncoder,
 		CallerKey:     "caller",
 		EncodeCaller:  zapcore.ShortCallerEncoder,
 		StacktraceKey: "trace",
@@ -58,23 +58,24 @@ func GetZapLogger(logLevel LogLevel) *AbsLog {
 	// Create logger
 	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(zap.ErrorLevel))
 	sugar := logger.Sugar()
-	return &AbsLog{
-		Debug:  sugar.Debug,
-		Debugf: sugar.Debugf,
-		Info:   sugar.Info,
-		Infof:  sugar.Infof,
-		Warn:   sugar.Warn,
-		Warnf:  sugar.Warnf,
-		Error:  sugar.Error,
-		Errorf: sugar.Errorf,
-		Fatal:  sugar.Fatal,
-		Fatalf: sugar.Fatalf,
-		Panic:  sugar.Panic,
-		Panicf: sugar.Panicf,
+
+	return &absLog{
+		debug:  sugar.Debug,
+		debugf: sugar.Debugf,
+		info:   sugar.Info,
+		infof:  sugar.Infof,
+		warn:   sugar.Warn,
+		warnf:  sugar.Warnf,
+		error:  sugar.Error,
+		errorf: sugar.Errorf,
+		fatal:  sugar.Fatal,
+		fatalf: sugar.Fatalf,
+		panic:  sugar.Panic,
+		panicf: sugar.Panicf,
 	}
 }
 
-func CustomTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format(logTimeFormat))
 }
 
