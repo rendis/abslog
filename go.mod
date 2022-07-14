@@ -1,4 +1,4 @@
-module github.com/rendis/abslog/v2
+module github.com/rendis/abslog
 
 go 1.18
 
