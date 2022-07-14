@@ -5,40 +5,49 @@ import (
 	"github.com/rendis/abslog"
 )
 
-func GetZapLogger() abslog.AbsLog {
-	return abslog.GetAbsLogBuilder().
-		LoggerType(abslog.ZapLogger).
-		LogLevel(abslog.DebugLevel).
-		Build()
-}
+func main() {
+	// Default
+	abslog.Debug("Default (Zap) Debug global")
+	abslog.Info("Default (Zap) Info global")
+	abslog.Warn("Default (Zap) Warn global")
+	abslog.Error("Default (Zap) Error global")
+	fmt.Println()
 
-func GetLogrusLogger() abslog.AbsLog {
-	return abslog.GetAbsLogBuilder().
+	// Set logger to Logrus by Type
+	abslog.SetLoggerType(abslog.LogrusLogger)
+	abslog.Debug("Set By Type Logrus Debug global")
+	abslog.Info("Set By Type Logrus Info global")
+	abslog.Warn("Set By Type Logrus Warn global")
+	abslog.Error("Set By Type Logrus Error global")
+	fmt.Println()
+
+	// Set logger to Zap by Type
+	abslog.SetLoggerType(abslog.ZapLogger)
+	abslog.Debug("Set By Type Zap Debug global")
+	abslog.Info("Set By Type Zap Info global")
+	abslog.Warn("Set By Type Zap Warn global")
+	abslog.Error("Set By Type Zap Error global")
+	fmt.Println()
+
+	// Set logger to Logrus by Builder
+	abslog.GetAbsLogBuilder().
 		LoggerType(abslog.LogrusLogger).
 		LogLevel(abslog.InfoLevel).
-		Build()
-}
-
-func main() {
-
-	abslog.Info("Info global")
-	abslog.Warn("Warn global")
-	abslog.Error("Error global")
-
+		BuildAndSetAsGlobal()
+	abslog.Debug("Set By Builder Logrus Debug global")
+	abslog.Info("Set By Builder Logrus Info global")
+	abslog.Warn("Set By Builder Logrus Warn global")
+	abslog.Error("Set By Builder Logrus Error global")
 	fmt.Println()
 
-	var log = GetZapLogger()
-	useLog(log, "Zap logger")
-
+	// Set logger to Zap by Builder
+	abslog.GetAbsLogBuilder().
+		LoggerType(abslog.ZapLogger).
+		LogLevel(abslog.InfoLevel).
+		BuildAndSetAsGlobal()
+	abslog.Debug("Set By Builder Zap Debug global")
+	abslog.Info("Set By Builder Zap Info global")
+	abslog.Warn("Set By Builder Zap Warn global")
+	abslog.Error("Set By Builder Zap Error global")
 	fmt.Println()
-
-	log = GetLogrusLogger()
-	useLog(log, "Logrus logger")
-}
-
-func useLog(log abslog.AbsLog, logType string) {
-	log.Debug("Debug logged - ", logType)
-	log.Info("Info logged - ", logType)
-	log.Warn("Warn logged - ", logType)
-	log.Error("Error logged with stacktrace - ", logType)
 }

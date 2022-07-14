@@ -69,20 +69,7 @@ func getZapLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
 	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(zap.ErrorLevel))
 	sugar := logger.Sugar()
 
-	return &absLog{
-		debug:  sugar.Debug,
-		debugf: sugar.Debugf,
-		info:   sugar.Info,
-		infof:  sugar.Infof,
-		warn:   sugar.Warn,
-		warnf:  sugar.Warnf,
-		error:  sugar.Error,
-		errorf: sugar.Errorf,
-		fatal:  sugar.Fatal,
-		fatalf: sugar.Fatalf,
-		panic:  sugar.Panic,
-		panicf: sugar.Panicf,
-	}
+	return &alterAbsLog{sugar}
 }
 
 func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {

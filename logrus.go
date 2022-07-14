@@ -8,34 +8,21 @@ import (
 )
 
 func getLogrusLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
-	logrus.WithContext(context.Background())
+	logr := logrus.New()
+	logr.WithContext(context.Background())
 
 	switch encoder {
 	case JSONEncoder:
-		logrus.SetFormatter(stackdriver.NewFormatter())
+		logr.SetFormatter(stackdriver.NewFormatter())
 	case ConsoleEncoder:
 	default:
 		panic(fmt.Sprintf("Encoder type '%v' is not supported", encoder))
 	}
 
-	//logrus.SetFormatter(stackdriver.NewFormatter())
-	logrus.SetLevel(getLogrusLevel(logLevel))
-	logrus.SetReportCaller(true)
+	logr.SetLevel(getLogrusLevel(logLevel))
+	logr.SetReportCaller(true)
 
-	return &absLog{
-		debug:  logrus.Debug,
-		debugf: logrus.Debugf,
-		info:   logrus.Info,
-		infof:  logrus.Infof,
-		warn:   logrus.Warn,
-		warnf:  logrus.Warnf,
-		error:  logrus.Error,
-		errorf: logrus.Errorf,
-		fatal:  logrus.Fatal,
-		fatalf: logrus.Fatalf,
-		panic:  logrus.Panic,
-		panicf: logrus.Panicf,
-	}
+	return logr
 }
 
 func getLogrusLevel(logLevel LogLevel) logrus.Level {
