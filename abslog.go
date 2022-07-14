@@ -1,6 +1,6 @@
 package abslog
 
-var al AbsLog = getZapLogger(InfoLevel)
+var al AbsLog = getZapLogger(defaultLogLevel, defaultEncoderType)
 
 func SetGlobalLogger(logger AbsLog) {
 	al = logger

@@ -2,13 +2,23 @@ package abslog
 
 import (
 	"context"
+	"fmt"
 	stackdriver "github.com/TV4/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 )
 
-func getLogrusLogger(logLevel LogLevel) AbsLog {
+func getLogrusLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
 	logrus.WithContext(context.Background())
-	logrus.SetFormatter(stackdriver.NewFormatter())
+
+	switch encoder {
+	case JSONEncoder:
+		logrus.SetFormatter(stackdriver.NewFormatter())
+	case ConsoleEncoder:
+	default:
+		panic(fmt.Sprintf("Encoder type '%v' is not supported", encoder))
+	}
+
+	//logrus.SetFormatter(stackdriver.NewFormatter())
 	logrus.SetLevel(getLogrusLevel(logLevel))
 	logrus.SetReportCaller(true)
 

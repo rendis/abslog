@@ -1,6 +1,7 @@
 package abslog
 
 import (
+	"fmt"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
@@ -9,7 +10,7 @@ import (
 
 const logTimeFormat = "2006-01-02T15:04:05Z"
 
-func getZapLogger(logLevel LogLevel) AbsLog {
+func getZapLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
 
 	// Encoder config
 	cfg := zapcore.EncoderConfig{
@@ -22,7 +23,16 @@ func getZapLogger(logLevel LogLevel) AbsLog {
 		EncodeCaller:  zapcore.ShortCallerEncoder,
 		StacktraceKey: "trace",
 	}
-	enc := zapcore.NewJSONEncoder(cfg)
+
+	var enc zapcore.Encoder
+	switch encoder {
+	case ConsoleEncoder:
+		enc = zapcore.NewConsoleEncoder(cfg)
+	case JSONEncoder:
+		enc = zapcore.NewJSONEncoder(cfg)
+	default:
+		panic(fmt.Sprintf("Encoder type '%v' is not supported", encoder))
+	}
 
 	// Get ZapCore equivalent of log level
 	zapLevel := getZapLevel(logLevel)
