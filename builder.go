@@ -92,7 +92,7 @@ func (builder *absBuilder) Build() AbsLog {
 // BuildAndSetAsGlobal builds a new AbsLogger and sets it as the global AbsLog.
 func (builder *absBuilder) BuildAndSetAsGlobal() AbsLog {
 	l := builder.build()
-	SetCustomLogger(l)
+	SetLogger(l)
 	return l
 }
 
