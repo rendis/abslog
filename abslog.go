@@ -178,8 +178,8 @@ func getCallerInfo() string {
 	}
 	funcName := runtime.FuncForPC(pc).Name()
 
-	parts := strings.Split(fileName, "/")
-	fileName = strings.Join(parts[:len(parts)-1], "/")
+	parts := strings.Split(funcName, ".")
+	funcName = parts[len(parts)-1]
 
-	return fmt.Sprintf("[%s/%s:%d]", fileName, funcName, lineNumber)
+	return fmt.Sprintf("[%s (%s:%d)]", fileName, funcName, lineNumber)
 }

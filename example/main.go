@@ -3,7 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/rendis/abslog"
+	"github.com/rendis/abslog/v3"
+	"github.com/rendis/abslog/v3/example/test"
 )
 
 func main() {
@@ -28,6 +29,9 @@ func main() {
 	abslog.WarnCtx(ctx, "Default (Zap) Warn with context")
 	abslog.ErrorCtx(ctx, "Default (Zap) Error with context")
 	fmt.Println()
+
+	// Print from other package
+	otherpackage.PrintFromOtherPackage()
 
 	// Set logger to Logrus by Type
 	abslog.SetLoggerType(abslog.LogrusLogger)
