@@ -10,11 +10,19 @@ import (
 	"strings"
 )
 
-// contextKey is the default key used to store context values in context.Context
-var contextKey = "abslog"
+// Default values for context configuration
+const (
+	// defaultContextKey is the default key used to store context values
+	defaultContextKey = "abslog"
+	// defaultContextSeparator is the default separator between context and log messages
+	defaultContextSeparator = " -> "
+)
 
-// contextSeparator is the string used to separate context values from log messages
-var contextSeparator = " -> "
+// contextKey is the current key used to store context values in context.Context
+var contextKey = defaultContextKey
+
+// contextSeparator is the current string used to separate context values from log messages
+var contextSeparator = defaultContextSeparator
 
 // contextFormatTemplate is the template used to format context values
 const contextFormatTemplate = "[%s]%s"
@@ -48,8 +56,14 @@ func init() {
 
 // SetCtxKey sets the key used to retrieve context values from context.Context.
 // This allows customization of how context values are stored and retrieved.
+// If key is empty or only whitespace, the default key "abslog" will be used.
 func SetCtxKey(key string) {
-	contextKey = key
+	key = strings.TrimSpace(key)
+	if key == "" {
+		contextKey = defaultContextKey
+	} else {
+		contextKey = key
+	}
 }
 
 // GetCtxKey returns the current key used to retrieve context values from context.Context.
@@ -57,10 +71,30 @@ func GetCtxKey() string {
 	return contextKey
 }
 
+// ResetCtxKey resets the context key to its default value.
+func ResetCtxKey() {
+	contextKey = defaultContextKey
+}
+
+// GetCtxSeparator returns the current separator used between context values and log messages.
+func GetCtxSeparator() string {
+	return contextSeparator
+}
+
+// ResetCtxSeparator resets the context separator to its default value.
+func ResetCtxSeparator() {
+	contextSeparator = defaultContextSeparator
+}
+
 // SetCtxSeparator sets the string used to separate context values from log messages.
-// Default separator is " -> ".
+// If separator is empty or only whitespace, the default separator " -> " will be used.
 func SetCtxSeparator(separator string) {
-	contextSeparator = separator
+	trimmed := strings.TrimSpace(separator)
+	if trimmed == "" {
+		contextSeparator = defaultContextSeparator
+	} else {
+		contextSeparator = separator
+	}
 }
 
 // Debug logs a message at level Debug on the standard logger.
