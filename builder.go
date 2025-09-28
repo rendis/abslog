@@ -57,6 +57,7 @@ type AbsLogBuilder interface {
 	LoggerGen(generator LoggerGen) AbsLogBuilder
 	LoggerType(loggerType LoggerType) AbsLogBuilder
 	EncoderType(encoderType EncoderType) AbsLogBuilder
+	ContextKey(key string) AbsLogBuilder
 	BuildAndSetAsGlobal() AbsLog
 	Build() AbsLog
 }
@@ -67,6 +68,7 @@ type absBuilder struct {
 	loggerGen   LoggerGen
 	loggerType  LoggerType
 	encoderType EncoderType
+	contextKey  string
 }
 
 // GetAbsLogBuilder returns a new AbsLog builder.
@@ -75,6 +77,7 @@ func GetAbsLogBuilder() AbsLogBuilder {
 		logLevel:    defaultLogLevel,
 		loggerType:  defaultLoggerType,
 		encoderType: defaultEncoderType,
+		contextKey:  "", // Empty means use global setting
 	}
 }
 
@@ -102,6 +105,14 @@ func (builder *absBuilder) EncoderType(encoderType EncoderType) AbsLogBuilder {
 	return builder
 }
 
+// ContextKey sets the context key for this logger instance.
+// If empty, the global context key setting will be used.
+// This allows different logger instances to use different context keys.
+func (builder *absBuilder) ContextKey(key string) AbsLogBuilder {
+	builder.contextKey = key
+	return builder
+}
+
 // Build builds a new AbsLog.
 func (builder *absBuilder) Build() AbsLog {
 	return builder.build()
@@ -120,6 +131,11 @@ func (builder *absBuilder) build() AbsLog {
 	// Validate encoder type
 	if builder.encoderType != ConsoleEncoder && builder.encoderType != JSONEncoder {
 		panic(fmt.Sprintf("Invalid encoder type: %d", builder.encoderType))
+	}
+
+	// Apply context key configuration if specified
+	if builder.contextKey != "" {
+		SetCtxKey(builder.contextKey)
 	}
 
 	// Set default logger generator if not provided
