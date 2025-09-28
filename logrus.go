@@ -24,7 +24,8 @@ func getLogrusLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
 	logr.SetLevel(getLogrusLevel(logLevel))
 	logr.SetReportCaller(true)
 
-	return logr
+	// Wrap in LoggerAdapter for consistent interface
+	return NewLoggerAdapter(logr)
 }
 
 // getLogrusLevel converts an AbsLog LogLevel to the corresponding Logrus log level.

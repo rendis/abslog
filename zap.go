@@ -80,8 +80,8 @@ func getZapLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
 	// Use sugar logger for easier variadic argument handling
 	sugar := logger.Sugar()
 
-	// Wrap in alterAbsLog to implement the AbsLog interface
-	return &alterAbsLog{sugar}
+	// Wrap in LoggerAdapter to implement the AbsLog interface
+	return NewLoggerAdapter(sugar)
 }
 
 // customTimeEncoder formats time values using the predefined logTimeFormat.

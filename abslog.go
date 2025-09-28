@@ -156,7 +156,7 @@ func SetLogger(logger AbsLog) {
 
 // getCtxValues extracts and formats context values for logging.
 // It supports three formats:
-// - map[string]interface{}: formatted as "key1=value1, key2=value2"
+// - map[string]any: formatted as "key1=value1, key2=value2"
 // - []string: formatted as "item1, item2, item3"
 // - string: formatted as-is
 // Returns an empty string if context is nil or contains no values.
