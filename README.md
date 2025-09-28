@@ -112,7 +112,8 @@ abslog.ErrorCtx(ctx, "Authentication failed")
 ```
 
 **Output Example:**
-```
+
+```textplain
 [transaction_id=txn-12345, user_id=user-67890, service=auth-service] -> Processing user authentication
 [transaction_id=txn-12345, user_id=user-67890, service=auth-service] -> Invalid credentials provided
 ```
@@ -143,6 +144,7 @@ customLogger.Info("This uses the custom logger instance")
 ```
 
 **Difference between Build and BuildAndSetAsGlobal:**
+
 - `Build()`: Returns a configured `AbsLog` instance that you can use directly, but doesn't affect the global logging functions
 - `BuildAndSetAsGlobal()`: Configures the logger and sets it as the global logger, updating all global `abslog.Info()`, `abslog.Debug()`, etc. functions to use this configuration
 
@@ -162,42 +164,42 @@ abslog is designed to be extensible. You can integrate any logging library that 
 
 1. **Create a Generator Function**: Implement a function that takes `LogLevel` and `EncoderType` and returns an `AbsLog`:
 
-```go
-func getCustomLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
-    // Create your custom logger instance
-    customLogger := // ... initialize your logger
+    ```go
+    func getCustomLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
+        // Create your custom logger instance
+        customLogger := // ... initialize your logger
 
-    // Configure log level
-    customLogger.SetLevel(convertToCustomLevel(logLevel))
+        // Configure log level
+        customLogger.SetLevel(convertToCustomLevel(logLevel))
 
-    // Configure encoding if supported
-    switch encoder {
-    case JSONEncoder:
-        // Set JSON formatter
-    case ConsoleEncoder:
-        // Set console formatter
+        // Configure encoding if supported
+        switch encoder {
+        case JSONEncoder:
+            // Set JSON formatter
+        case ConsoleEncoder:
+            // Set console formatter
+        }
+
+        // Wrap in LoggerAdapter
+        return NewLoggerAdapter(customLogger)
     }
-
-    // Wrap in LoggerAdapter
-    return NewLoggerAdapter(customLogger)
-}
-```
+    ```
 
 2. **Level Conversion**: Create a helper function to convert abslog levels to your library's levels:
 
-```go
-func convertToCustomLevel(logLevel LogLevel) CustomLevel {
-    switch logLevel {
-    case DebugLevel:
-        return CustomDebug
-    case InfoLevel:
-        return CustomInfo
-    // ... other levels
-    default:
-        return CustomInfo
+    ```go
+    func convertToCustomLevel(logLevel LogLevel) CustomLevel {
+        switch logLevel {
+        case DebugLevel:
+            return CustomDebug
+        case InfoLevel:
+            return CustomInfo
+        // ... other levels
+        default:
+            return CustomInfo
+        }
     }
-}
-```
+    ```
 
 3. **Use with Builder**: Set your custom generator and build the logger:
 
@@ -222,22 +224,26 @@ The LoggerAdapter requires your logger to implement methods: `Debug/Info/Warn/Er
 ## API Overview
 
 ### Global Functions
+
 - `Debug/Info/Warn/Error/Fatal/Panic(args ...any)`
 - `Debugf/Infof/Warnf/Errorf/Fatalf/Panicf(format string, args ...any)`
 - `DebugCtx/InfoCtx/WarnCtx/ErrorCtx/FatalCtx/PanicCtx(ctx context.Context, args ...any)`
 - `DebugCtxf/InfoCtxf/WarnCtxf/ErrorCtxf/FatalCtxf/PanicCtxf(ctx context.Context, format string, args ...any)`
 
 ### Configuration
+
 - `SetLoggerType(LoggerType)`
 - `SetLogger(AbsLog)`
 - `GetAbsLogBuilder() AbsLogBuilder`
 
 ### Context Management
+
 - `SetCtxKey(key string)`
 - `GetCtxKey() string`
 - `SetCtxSeparator(separator string)`
 
 ### Types
+
 - `LoggerType`: `ZapLogger`, `LogrusLogger`
 - `LogLevel`: `DebugLevel`, `InfoLevel`, `WarnLevel`, `ErrorLevel`, `FatalLevel`, `PanicLevel`
 - `EncoderType`: `ConsoleEncoder`, `JSONEncoder`
