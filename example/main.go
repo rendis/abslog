@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"github.com/rendis/abslog/v3"
-	"github.com/rendis/abslog/v3/example/test"
+	otherpackage "github.com/rendis/abslog/v3/example/test"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 
 	// Default With Context
 	var ctx = context.Background()
-	ctxValuesMap := map[string]interface{}{
+	ctxValuesMap := map[string]any{
 		"id":   "1234567",
 		"name": "John Doe",
 		"age":  30,

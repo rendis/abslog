@@ -2,12 +2,13 @@ package otherpackage
 
 import (
 	"context"
+
 	"github.com/rendis/abslog/v3"
 )
 
 func PrintFromOtherPackage() {
 	var ctx = context.Background()
-	ctxValuesMap := map[string]interface{}{
+	ctxValuesMap := map[string]any{
 		"id":   "1234567",
 		"name": "John Doe",
 		"age":  30,
