@@ -6,7 +6,6 @@ package abslog
 import (
 	"context"
 	"fmt"
-	"runtime"
 	"strings"
 )
 
@@ -221,49 +220,34 @@ func getCtxValues(ctx context.Context) string {
 }
 
 // logCtx wraps a regular log function to add context support.
-// It extracts caller information and context values, then prepends them to the log message.
+// It extracts context values and prepends them to the log message.
 func logCtx(log func(args ...any)) func(ctx context.Context, args ...any) {
 	return func(ctx context.Context, args ...any) {
-		// Get caller information for debugging
-		callerInfo := getCallerInfo()
 		// Extract formatted context values
 		ctxValues := getCtxValues(ctx)
-		// Combine caller info, context values, and original message
-		log(fmt.Sprintf("%s %s %s", callerInfo, ctxValues, fmt.Sprint(args...)))
+		if ctxValues == "" {
+			// No context values, log normally
+			log(args...)
+		} else {
+			// Prepend context values to message
+			log(fmt.Sprintf("%s %s", ctxValues, fmt.Sprint(args...)))
+		}
 	}
 }
 
 // logCtxf wraps a formatted log function to add context support.
-// It extracts caller information and context values, then prepends them to the formatted log message.
+// It extracts context values and prepends them to the formatted log message.
 func logCtxf(log func(format string, args ...any)) func(ctx context.Context, format string, args ...any) {
 	return func(ctx context.Context, format string, args ...any) {
-		// Get caller information for debugging
-		callerInfo := getCallerInfo()
 		// Extract formatted context values
 		ctxValues := getCtxValues(ctx)
-		// Combine caller info, context values, and formatted message
-		log(fmt.Sprintf("%s %s %s", callerInfo, ctxValues, fmt.Sprintf(format, args...)))
+		if ctxValues == "" {
+			// No context values, log normally
+			log(format, args...)
+		} else {
+			// Prepend context values to formatted message
+			log("%s %s", ctxValues, fmt.Sprintf(format, args...))
+		}
 	}
 }
 
-// getCallerInfo extracts caller information for debugging purposes.
-// It walks up the call stack by 2 frames to skip the wrapper functions
-// and get the actual caller's file, function name, and line number.
-func getCallerInfo() string {
-	// Skip 2 frames: current function and the wrapper function
-	pc, fileName, lineNumber, ok := runtime.Caller(2)
-	if !ok {
-		// Unable to get caller info
-		return ""
-	}
-
-	// Get full function name from program counter
-	funcName := runtime.FuncForPC(pc).Name()
-
-	// Extract just the function name (last part after dots)
-	parts := strings.Split(funcName, ".")
-	funcName = parts[len(parts)-1]
-
-	// Format as [filename (functionName:lineNumber)]
-	return fmt.Sprintf("[%s (%s:%d)]", fileName, funcName, lineNumber)
-}
