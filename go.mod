@@ -1,6 +1,6 @@
 module github.com/rendis/abslog/v3
 
-go 1.20
+go 1.25.1
 
 require (
 	github.com/TV4/logrus-stackdriver-formatter v0.1.0
