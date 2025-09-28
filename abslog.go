@@ -23,8 +23,6 @@ var contextKey = defaultContextKey
 // contextSeparator is the current string used to separate context values from log messages
 var contextSeparator = defaultContextSeparator
 
-// contextFormatTemplate is the template used to format context values
-const contextFormatTemplate = "[%s]%s"
 
 // AbsLog defines the interface for abstracted logging functionality.
 // It provides methods for logging at different levels with optional formatting.
@@ -201,18 +199,28 @@ func getCtxValues(ctx context.Context) string {
 	// Type switch to handle different context value formats
 	switch ctxValues := ctx.Value(contextKey).(type) {
 	case map[string]any:
-		// Convert map to key=value pairs
-		var pairs []string
+		// Use strings.Builder for efficient string construction
+		var builder strings.Builder
+		builder.WriteString("[")
+		first := true
 		for k, v := range ctxValues {
-			pairs = append(pairs, fmt.Sprintf("%s=%v", k, v))
+			if !first {
+				builder.WriteString(", ")
+			}
+			builder.WriteString(k)
+			builder.WriteString("=")
+			builder.WriteString(fmt.Sprint(v)) // Single conversion, not template
+			first = false
 		}
-		return fmt.Sprintf(contextFormatTemplate, strings.Join(pairs, ", "), contextSeparator)
+		builder.WriteString("]")
+		builder.WriteString(contextSeparator)
+		return builder.String()
 	case []string:
-		// Join string slice with commas
-		return fmt.Sprintf(contextFormatTemplate, strings.Join(ctxValues, ", "), contextSeparator)
+		// Direct concatenation without fmt.Sprintf
+		return "[" + strings.Join(ctxValues, ", ") + "]" + contextSeparator
 	case string:
-		// Use string value as-is
-		return fmt.Sprintf(contextFormatTemplate, ctxValues, contextSeparator)
+		// Direct concatenation without fmt.Sprintf
+		return "[" + ctxValues + "]" + contextSeparator
 	default:
 		// Unsupported type, return empty string
 		return ""
