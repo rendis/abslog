@@ -8,8 +8,11 @@ import (
 	"time"
 )
 
+// logTimeFormat defines the time format used for log timestamps.
 const logTimeFormat = "2006-01-02T15:04:05Z"
 
+// getZapLogger creates and configures a Zap logger with the specified log level and encoder type.
+// It sets up separate outputs for stdout (info and below) and stderr (error and above).
 func getZapLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
 
 	// Encoder config
@@ -37,12 +40,14 @@ func getZapLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
 	// Get ZapCore equivalent of log level
 	zapLevel := getZapLevel(logLevel)
 
-	// Stdout level enabler
+	// Stdout level enabler: route info/warn/debug to stdout
+	// Only logs at or above the specified level, but below error level
 	stdoutLevels := zap.LevelEnablerFunc(func(level zapcore.Level) bool {
 		return level >= zapLevel && level < zap.ErrorLevel
 	})
 
-	// Stderr level enabler
+	// Stderr level enabler: route error/fatal/panic to stderr
+	// Only logs at error level and above, respecting the minimum log level
 	stderrLevels := zap.LevelEnablerFunc(func(level zapcore.Level) bool {
 		return level >= zap.ErrorLevel && level >= zapLevel
 	})
@@ -51,13 +56,16 @@ func getZapLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
 	stdoutSyncer := zapcore.Lock(os.Stdout)
 	stderrSyncer := zapcore.Lock(os.Stderr)
 
-	// Core multi-output
+	// Core multi-output: combines stdout and stderr cores
+	// This allows different log levels to be routed to appropriate outputs
 	core := zapcore.NewTee(
+		// Core for stdout (debug, info, warn)
 		zapcore.NewCore(
 			enc,
 			stdoutSyncer,
 			stdoutLevels,
 		),
+		// Core for stderr (error, fatal, panic)
 		zapcore.NewCore(
 			enc,
 			stderrSyncer,
@@ -65,17 +73,23 @@ func getZapLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
 		),
 	)
 
-	// Create logger
+	// Create logger with caller info and stack traces
+	// AddCallerSkip(1) skips one frame to show the actual caller, not the wrapper
+	// AddStacktrace(zap.ErrorLevel) adds stack traces for error and above
 	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(zap.ErrorLevel))
+	// Use sugar logger for easier variadic argument handling
 	sugar := logger.Sugar()
 
+	// Wrap in alterAbsLog to implement the AbsLog interface
 	return &alterAbsLog{sugar}
 }
 
+// customTimeEncoder formats time values using the predefined logTimeFormat.
 func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format(logTimeFormat))
 }
 
+// getZapLevel converts an AbsLog LogLevel to the corresponding Zap log level.
 func getZapLevel(logLevel LogLevel) zapcore.Level {
 	switch logLevel {
 	case DebugLevel:

@@ -7,6 +7,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// getLogrusLogger creates and configures a Logrus logger with the specified log level and encoder type.
+// It supports both JSON (using Stackdriver formatter) and console output formats.
 func getLogrusLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
 	logr := logrus.New()
 	logr.WithContext(context.Background())
@@ -25,6 +27,7 @@ func getLogrusLogger(logLevel LogLevel, encoder EncoderType) AbsLog {
 	return logr
 }
 
+// getLogrusLevel converts an AbsLog LogLevel to the corresponding Logrus log level.
 func getLogrusLevel(logLevel LogLevel) logrus.Level {
 	switch logLevel {
 	case DebugLevel:

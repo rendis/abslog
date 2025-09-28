@@ -2,28 +2,44 @@ package abslog
 
 import "fmt"
 
+// LogLevel represents the severity level of log messages.
 type LogLevel int8
 
+// Log level constants defining the severity of log messages.
 const (
+	// DebugLevel is used for debug messages, typically only enabled during development.
 	DebugLevel LogLevel = iota + 1
+	// InfoLevel is used for general informational messages.
 	InfoLevel
+	// WarnLevel is used for warning messages that indicate potential issues.
 	WarnLevel
+	// ErrorLevel is used for error messages that indicate failures.
 	ErrorLevel
+	// PanicLevel is used for panic messages that cause the application to panic.
 	PanicLevel
+	// FatalLevel is used for fatal messages that cause the application to exit.
 	FatalLevel
 )
 
+// EncoderType represents the format used for log output.
 type EncoderType int8
 
+// Encoder type constants defining the output format for log messages.
 const (
+	// ConsoleEncoder formats logs for human-readable console output.
 	ConsoleEncoder EncoderType = iota + 1
+	// JSONEncoder formats logs as JSON for structured logging.
 	JSONEncoder
 )
 
+// LoggerType represents the underlying logging library to use.
 type LoggerType int8
 
+// Logger type constants defining which logging backend to use.
 const (
+	// ZapLogger uses the Uber Zap logging library as the backend.
 	ZapLogger LoggerType = iota + 1
+	// LogrusLogger uses the Sirupsen Logrus logging library as the backend.
 	LogrusLogger
 )
 
@@ -31,6 +47,8 @@ const defaultLogLevel = InfoLevel
 const defaultLoggerType = ZapLogger
 const defaultEncoderType = ConsoleEncoder
 
+// LoggerGen is a function type that creates an AbsLog instance
+// with the specified log level and encoder type.
 type LoggerGen func(logLevel LogLevel, encoder EncoderType) AbsLog
 
 // AbsLogBuilder is the interface that wraps the Builder methods to create a new AbsLog.
@@ -96,11 +114,15 @@ func (builder *absBuilder) BuildAndSetAsGlobal() AbsLog {
 	return l
 }
 
+// build creates the final AbsLog instance using the configured settings.
+// It validates the encoder type and sets up the appropriate logger generator if needed.
 func (builder *absBuilder) build() AbsLog {
+	// Validate encoder type
 	if builder.encoderType != ConsoleEncoder && builder.encoderType != JSONEncoder {
 		panic(fmt.Sprintf("Invalid encoder type: %d", builder.encoderType))
 	}
 
+	// Set default logger generator if not provided
 	if builder.loggerGen == nil {
 		switch builder.loggerType {
 		case ZapLogger:
@@ -108,10 +130,11 @@ func (builder *absBuilder) build() AbsLog {
 		case LogrusLogger:
 			builder.loggerGen = getLogrusLogger
 		default:
-			panic(fmt.Sprintf("AbsLog type '%s' is not supported", builder.loggerType))
+			panic(fmt.Sprintf("AbsLog type '%d' is not supported", int(builder.loggerType)))
 		}
 	}
 
+	// Create and return the logger instance
 	return builder.loggerGen(builder.logLevel, builder.encoderType)
 }
 
@@ -119,50 +142,50 @@ type alterAbsLog struct {
 	al AbsLog
 }
 
-func (l *alterAbsLog) Debug(args ...interface{}) {
+func (l *alterAbsLog) Debug(args ...any) {
 	l.al.Debug(args...)
 }
 
-func (l *alterAbsLog) Debugf(format string, args ...interface{}) {
+func (l *alterAbsLog) Debugf(format string, args ...any) {
 	l.al.Debugf(format, args...)
 }
 
-func (l *alterAbsLog) Info(args ...interface{}) {
+func (l *alterAbsLog) Info(args ...any) {
 	l.al.Info(args...)
 }
 
-func (l *alterAbsLog) Infof(format string, args ...interface{}) {
+func (l *alterAbsLog) Infof(format string, args ...any) {
 	l.al.Infof(format, args...)
 }
 
-func (l *alterAbsLog) Warn(args ...interface{}) {
+func (l *alterAbsLog) Warn(args ...any) {
 	l.al.Warn(args...)
 }
 
-func (l *alterAbsLog) Warnf(format string, args ...interface{}) {
+func (l *alterAbsLog) Warnf(format string, args ...any) {
 	l.al.Warnf(format, args...)
 }
 
-func (l *alterAbsLog) Error(args ...interface{}) {
+func (l *alterAbsLog) Error(args ...any) {
 	l.al.Error(args...)
 }
 
-func (l *alterAbsLog) Errorf(format string, args ...interface{}) {
+func (l *alterAbsLog) Errorf(format string, args ...any) {
 	l.al.Errorf(format, args...)
 }
 
-func (l *alterAbsLog) Panic(args ...interface{}) {
+func (l *alterAbsLog) Panic(args ...any) {
 	l.al.Panic(args...)
 }
 
-func (l *alterAbsLog) Panicf(format string, args ...interface{}) {
+func (l *alterAbsLog) Panicf(format string, args ...any) {
 	l.al.Panicf(format, args...)
 }
 
-func (l *alterAbsLog) Fatal(args ...interface{}) {
+func (l *alterAbsLog) Fatal(args ...any) {
 	l.al.Fatal(args...)
 }
 
-func (l *alterAbsLog) Fatalf(format string, args ...interface{}) {
+func (l *alterAbsLog) Fatalf(format string, args ...any) {
 	l.al.Fatalf(format, args...)
 }
