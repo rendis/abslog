@@ -229,8 +229,8 @@ func logCtx(log func(args ...any)) func(ctx context.Context, args ...any) {
 			// No context values, log normally
 			log(args...)
 		} else {
-			// Prepend context values to message
-			log(fmt.Sprintf("%s %s", ctxValues, fmt.Sprint(args...)))
+			message := fmt.Sprint(args...)
+			log(ctxValues + " " + message)
 		}
 	}
 }
@@ -245,9 +245,9 @@ func logCtxf(log func(format string, args ...any)) func(ctx context.Context, for
 			// No context values, log normally
 			log(format, args...)
 		} else {
-			// Prepend context values to formatted message
-			log("%s %s", ctxValues, fmt.Sprintf(format, args...))
+			// Combine context with user format - single formatting operation
+			newFormat := ctxValues + " " + format
+			log(newFormat, args...)
 		}
 	}
 }
-
