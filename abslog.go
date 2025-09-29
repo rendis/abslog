@@ -18,11 +18,12 @@ const (
 )
 
 // contextKey is the current key used to store context values in context.Context
-var contextKey = defaultContextKey
+type ContextKeyType string
+
+var contextKey ContextKeyType = ContextKeyType(defaultContextKey)
 
 // contextSeparator is the current string used to separate context values from log messages
 var contextSeparator = defaultContextSeparator
-
 
 // AbsLog defines the interface for abstracted logging functionality.
 // It provides methods for logging at different levels with optional formatting.
@@ -59,12 +60,12 @@ func SetCtxKey(key string) {
 	if key == "" {
 		contextKey = defaultContextKey
 	} else {
-		contextKey = key
+		contextKey = ContextKeyType(key)
 	}
 }
 
 // GetCtxKey returns the current key used to retrieve context values from context.Context.
-func GetCtxKey() string {
+func GetCtxKey() ContextKeyType {
 	return contextKey
 }
 

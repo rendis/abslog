@@ -156,6 +156,8 @@ Customize the context key used for storing values:
 abslog.SetCtxKey("my-custom-key")
 ```
 
+**Note on Type Safety**: `SetCtxKey` automatically converts the string parameter to `ContextKeyType` to avoid Go's static analysis warning SA1029: *"should not use built-in type string as key for value; define your own type to avoid collisions"*. This ensures safe usage with `context.WithValue()` as recommended by Go's context package documentation, which states that context keys should be comparable and not of built-in types to prevent collisions between packages.
+
 ### Adding Custom Logging Libraries
 
 abslog is designed to be extensible. You can integrate any logging library that provides the standard logging methods. The process involves creating a generator function and using the LoggerAdapter.
@@ -239,7 +241,7 @@ The LoggerAdapter requires your logger to implement methods: `Debug/Info/Warn/Er
 ### Context Management
 
 - `SetCtxKey(key string)`
-- `GetCtxKey() string`
+- `GetCtxKey() ContextKeyType`
 - `SetCtxSeparator(separator string)`
 
 ### Types
@@ -247,6 +249,7 @@ The LoggerAdapter requires your logger to implement methods: `Debug/Info/Warn/Er
 - `LoggerType`: `ZapLogger`, `LogrusLogger`
 - `LogLevel`: `DebugLevel`, `InfoLevel`, `WarnLevel`, `ErrorLevel`, `FatalLevel`, `PanicLevel`
 - `EncoderType`: `ConsoleEncoder`, `JSONEncoder`
+- `ContextKeyType`: Custom type for context keys to avoid Go's SA1029 static analysis warning when using with `context.WithValue()`
 
 ## Contributing
 
